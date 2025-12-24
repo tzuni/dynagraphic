@@ -21,7 +21,6 @@ class GdcDiGraph(nx.DiGraph):
 class GdcBioGraph():
     def __init__(self, node_list=[], edge_list=[]) -> None:
         self.graph = GdcDiGraph()
-        self.display_graph = None
         self.nodes = {}
         self.edges = {}
         # Moving to keep subgraph state here instead of node display properties
@@ -89,27 +88,92 @@ class GdcBioGraph():
     
     # Manage subgraph
     def node_in_subgraph(self, node_id: str) -> bool:
-        return self.nodes[node_id].is_standard()
+        return node_id in self.subgraph
+        # return self.nodes[node_id].is_standard()
 
-    # View interface
-    # [action functions] > [dependent update functions] > [regenerate view]
-    # Actions: update state on nodes/edges
-    # - Add view node
-    # - ...
-    # Update Functions Process 
-    # - update fringe nodes
-    # - 
-    # Regenerate View
-    # - get cytoscape elements
-    # -
+    ######## State-Modifying Actions
+    def select_only_node(self, node_id: str) -> None:
+        """
+        Set node matching node_id to selected, de-select all others
+        """
+        self.selected_nodes = set([node_id])
+    
+    def add_node_to_selection(self, node_id: str) -> None:
+        """
+        Add node matching node_id to set of selected nodes
+        """
+        self.selected_nodes |= set([node_id])
+    
+    def select_no_nodes(self) -> None:
+        """
+        Clear selection so that no nodes are selected
+        """
+        self.selected_nodes = set()
+    
+    def add_subgraph_node(self, node_id: str) -> None:
+        """
+        Add node matching node_id to subgraph
+        """
+        self.subgraph_nodes |= set()
+    
+    def remove_subgraph_node(self, node_id: str) -> None:
+        """
+        Remove node matching node_id from subgraph
+        """
+        self.subgraph_nodes -= set([node_id])
 
-    ######## Action Functions
-    def select_node(self, node_id: str) -> None:
-        '''
-        Select node matching node_id
-        '''
+    def empty_subgraph(self) -> None:
+        """
+        Reset subgraph so that it is empty
+        """
+        self.subgraph_nodes = set()
 
-        self.nodes[node_id].set_selected()
+    ######### Render Methods
+    # WORKING HERE:
+    def render_subgraph(self) -> None:
+        """
+        Render the subgraph based on current state
+        """
+        # reset properties on all nodes and edges
+        # If one node is selected, set fringe nodes and edges
+        # set `selected`` for nodes in selected_nodes
+        # create subgraph view for set of subgraph nodes and fringe nodes
+        # report cytoscape elements
+
+        # Can I determine a state delta from last render?
+        # Would avoid quite so many updates each render cycle
+        # main thing is set of subgraph nodes and selected nodes
+
+    def reset_nodes(self) -> None:
+        """
+        reset properties on all nodes
+        """
+        
+        pass
+    
+    def set_fringes(self) -> None:
+        """
+        Set fringe nodes on nodes in selection
+        """
+        pass
+
+    def set_selected(self) -> None:
+        """
+        Set selected on nodes in selection
+        """
+        pass
+    
+    def render_cytoscape_elements(self) -> list:
+        """
+        Render ctoscape elements for subgraph
+        """
+        pass
+
+    # def select_node(self, node_id: str) -> None:
+    #     '''
+    #     Select node matching node_id
+    #     '''
+    #     self.nodes[node_id].set_selected()
 
         # de-select other nodes
         # hide non-subgraph nodes
